@@ -34,21 +34,23 @@ else
 fi
 CASK="$WORK_DIR/tap/$CASK_PATH"
 
-if [ ! -f "$CASK" ]; then
-    echo "==> Cask file missing — creating $CASK_PATH from scratch"
-    mkdir -p "$(dirname "$CASK")"
-    cat > "$CASK" <<RUBY
+# Always rewrite the cask file from the embedded template, even if one
+# already exists. This way every release publishes a consistent cask
+# (postflight, uninstall, zap, etc.) instead of drifting whenever the
+# template changes.
+mkdir -p "$(dirname "$CASK")"
+cat > "$CASK" <<RUBY
 cask "motobuds" do
   version "$VERSION"
   sha256 "$SHA"
 
-  url "https://github.com/Juanipis/motobuds/releases/download/v#{version}/MotoBuds-#{version}.zip"
-  name "MotoBuds"
-  desc "Native macOS companion for Motorola Moto Buds (ANC, EQ, battery, gestures)"
+  url      "https://github.com/Juanipis/motobuds/releases/download/v#{version}/MotoBuds-#{version}.zip"
+  name     "MotoBuds"
+  desc     "Native macOS companion for Motorola Moto Buds (ANC, battery, gestures)"
   homepage "https://github.com/Juanipis/motobuds"
 
   livecheck do
-    url :url
+    url      :url
     strategy :github_latest
   end
 
@@ -56,22 +58,34 @@ cask "motobuds" do
 
   app "MotoBuds.app"
 
+  # The build is ad-hoc signed (no Developer ID notarization). Strip the
+  # quarantine xattr so Gatekeeper doesn't show a "Apple no ha podido
+  # verificar…" dialog the first time the user opens it.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/MotoBuds.app"],
+                   sudo: false
+  end
+
+  uninstall quit: "com.juanipis.MotoBuds"
+
   zap trash: [
     "~/Library/Application Support/MotoBuds",
     "~/Library/Caches/com.juanipis.MotoBuds",
     "~/Library/Logs/MotoBuds.log",
     "~/Library/Preferences/com.juanipis.MotoBuds.plist",
+    "~/Library/Saved Application State/com.juanipis.MotoBuds.savedState",
   ]
+
+  caveats <<~EOS
+    On first launch macOS will ask for Bluetooth permission. Accept and
+    MotoBuds will pair with the buds you already have connected.
+
+    The app lives in the menu bar. To always launch it at login open
+    "MotoBuds" → tab "Acerca de" → toggle "Abrir al iniciar sesión".
+  EOS
 end
 RUBY
-else
-    echo "==> Rewriting cask"
-    sed -i.bak -E \
-        -e "s|^(  version )\"[^\"]+\"|\\1\"$VERSION\"|" \
-        -e "s|^(  sha256 )\"[^\"]+\"|\\1\"$SHA\"|" \
-        "$CASK"
-    rm -f "$CASK.bak"
-fi
 
 cd "$WORK_DIR/tap"
 git config user.name  "github-actions[bot]"
