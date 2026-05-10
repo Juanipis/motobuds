@@ -34,21 +34,35 @@ public actor SPPTransport: Transport {
     public func connect() async throws {
         guard !isConnected else { return }
         let mac = config.mac
-        let channel = config.channel
-        // IOBluetooth requires its synchronous calls to run on the main
-        // thread; off-main calls return kIOReturnError even though bluetoothd
-        // completes the connection 80 ms later. We hop to MainActor and
-        // hand back a Sendable bridge.
-        let bridge: SPPBridge = try await MainActor.run {
-            let b = SPPBridge(mac: mac, channel: channel) { [weak self] data in
-                Task { await self?.ingest(data) }
+        // Try the configured channel first, then fall back to the other
+        // vendor SPP channels the buds expose. macOS occasionally keeps a
+        // stale lock on one channel after a crash; the other usually opens.
+        let channels: [BluetoothRFCOMMChannelID] =
+            [config.channel] + [16, 20, 17].filter { $0 != config.channel }
+
+        var lastCode: Int32 = -1
+        for channel in channels {
+            // IOBluetooth requires its synchronous calls to run on the main
+            // thread; off-main calls return kIOReturnError even though
+            // bluetoothd completes the connection 80 ms later. We hop to
+            // MainActor and hand back a Sendable bridge.
+            let result: (SPPBridge?, Int32) = await MainActor.run {
+                let b = SPPBridge(mac: mac, channel: channel) { [weak self] data in
+                    Task { await self?.ingest(data) }
+                }
+                let code = b.open()
+                if code == 0 { return (b, 0) }
+                b.close()
+                return (nil, code)
             }
-            let code = b.open()
-            guard code == 0 else { throw TransportError.channelOpenFailed(code: code) }
-            return b
+            if let bridge = result.0 {
+                self.bridge = bridge
+                self.isConnected = true
+                return
+            }
+            lastCode = result.1
         }
-        self.bridge = bridge
-        isConnected = true
+        throw TransportError.channelOpenFailed(code: lastCode)
     }
 
     public func disconnect() async {
