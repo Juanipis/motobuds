@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/Juanipis/motobuds/compare/v1.2.2...v1.3.0) (2026-05-10)
+
+### Features
+
+* **buds:** more sound toggles, hardware info, find-buds fix ([1c7bbce](https://github.com/Juanipis/motobuds/commit/1c7bbce3266219170fb9277df509d9c06b05aac4))
+
 ## [1.2.2](https://github.com/Juanipis/motobuds/compare/v1.2.1...v1.2.2) (2026-05-10)
 
 ### Bug Fixes
