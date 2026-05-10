@@ -1,0 +1,31 @@
+# Build artifacts
+.build/
+.swiftpm/
+*.app
+DerivedData/
+*.xcodeproj/
+
+# Generated icon (regenerated on demand by Bundle/make-icon.sh)
+Bundle/AppIcon.icns
+
+# Node tooling for semantic-release
+node_modules/
+package-lock.json
+yarn.lock
+
+# Apple junk
+.DS_Store
+*.swp
+
+# SPM
+Package.resolved
+
+# Reverse-engineering work area — proprietary Motorola code, NEVER commit.
+# Everything in apk/ is local-only.
+apk/
+
+# Local logs and probe outputs
+docs/sniff-*.txt
+docs/probe-*.txt
+docs/listen-*.txt
+*.log

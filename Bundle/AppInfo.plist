@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key><string>en</string>
+    <key>CFBundleExecutable</key><string>MotoBudsApp</string>
+    <key>CFBundleIdentifier</key><string>com.juanipis.MotoBuds</string>
+    <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+    <key>CFBundleName</key><string>MotoBuds</string>
+    <key>CFBundleDisplayName</key><string>MotoBuds</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+    <key>CFBundleIconName</key><string>AppIcon</string>
+    <key>CFBundleShortVersionString</key><string>0.1.0</string>
+    <key>CFBundleVersion</key><string>1</string>
+    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>LSUIElement</key><true/>
+    <key>NSHumanReadableCopyright</key><string>© 2026 Juan Pablo Díaz Correa. MIT-licensed.</string>
+    <key>MBAuthor</key><string>Juan Pablo Díaz Correa</string>
+    <key>MBAuthorURL</key><string>https://github.com/Juanipis</string>
+    <key>MBRepoURL</key><string>https://github.com/Juanipis/motobuds</string>
+    <key>NSPrincipalClass</key><string>NSApplication</string>
+    <key>NSSupportsAutomaticTermination</key><true/>
+    <key>NSSupportsSuddenTermination</key><false/>
+
+    <!-- Bluetooth permission strings — required by macOS for Classic + LE. -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>MotoBuds talks to your Moto Buds over Bluetooth Classic (RFCOMM SPP) to read battery, switch ANC modes, and configure them.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>MotoBuds talks to your Moto Buds over Bluetooth Classic (RFCOMM SPP) to read battery, switch ANC modes, and configure them.</string>
+
+    <!-- Sparkle auto-update configuration. -->
+    <!-- Replace SUPublicEDKey with your generated EdDSA public key once you
+         run `generate_keys` from Sparkle. Leave SUFeedURL pointing at the
+         GitHub Pages site that publishes appcast.xml. -->
+    <key>SUFeedURL</key><string>https://juanipis.github.io/motobuds/appcast.xml</string>
+    <key>SUPublicEDKey</key><string></string>
+    <key>SUEnableAutomaticChecks</key><true/>
+    <key>SUEnableInstallerLauncherService</key><true/>
+    <!-- Once a day. The user can also "Check for Updates…" from the popover. -->
+    <key>SUScheduledCheckInterval</key><integer>86400</integer>
+</dict>
+</plist>

@@ -1,0 +1,79 @@
+
+=== MotoBuds — passive discovery dump =====================================
+date: 2026-05-09 22:29:36 +0000
+
+=== Bluetooth Classic — paired devices (IOBluetooth) ======================
+
+• moto buds  [a4-05-6e-d9-c9-14]  connected  classOfDevice=0x240404
+  serviceClassMajor=0x0 deviceClassMajor=0x4 deviceClassMinor=0x1
+  SDP records: 14
+    [0] (unnamed service)
+        RFCOMM channel: 1
+        ServiceClassIDList: uuid32(00 00 11 08)
+        ProfileDescriptorList: { { uuid32(00 00 11 08), uint32(258) } }
+    [1] AVRCP Remote Control Target
+        L2CAP PSM: 0x17
+        ServiceClassIDList: uuid32(00 00 11 0c)
+        ProfileDescriptorList: { { uuid32(00 00 11 0e), uint32(262) } }
+    [2] SPP_MOBILe
+        RFCOMM channel: 20
+        ServiceClassIDList: uuid128(18 2b 01 00 48 99 11 ee be 56 02 42 ac 12 00 02)
+        ProfileDescriptorList: { { uuid128(18 2b 01 00 48 99 11 ee be 56 02 42 ac 12 00 02), uint32(258) } }
+    [3] SPP_MOBILE
+        RFCOMM channel: 16
+        ServiceClassIDList: uuid128(fc 9d 9f e0 48 99 11 ee be 56 02 42 ac 12 00 02)
+        ProfileDescriptorList: { { uuid128(fc 9d 9f e0 48 99 11 ee be 56 02 42 ac 12 00 02), uint32(258) } }
+    [4] Advanced Audio
+        L2CAP PSM: 0x17
+        ServiceClassIDList: uuid32(00 00 11 0f)
+        ProfileDescriptorList: { { uuid32(00 00 11 0e), uint32(262) } }
+    [5] (unnamed service)
+        RFCOMM channel: 1
+        ServiceClassIDList: uuid32(00 00 12 03)
+        ProfileDescriptorList: { { uuid32(00 00 11 08), uint32(258) } }
+    [6] (unnamed service)
+        RFCOMM channel: 1
+        ServiceClassIDList: uuid32(00 00 11 1e)
+        ProfileDescriptorList: { { uuid32(00 00 11 1e), uint32(263) } }
+    [7] RFCOMM COM
+        RFCOMM channel: 17
+        ServiceClassIDList: uuid128(df 21 fe 2c 25 15 4f db 88 86 f1 2c 4d 67 92 7c)
+        ProfileDescriptorList: { { uuid32(00 00 11 01), uint32(258) } }
+    [8] TOTA
+        RFCOMM channel: 12
+        ServiceClassIDList: uuid32(00 00 11 01)
+        ProfileDescriptorList: { { uuid32(00 00 11 01), uint32(258) } }
+    [9] BESOTA
+        RFCOMM channel: 13
+        ServiceClassIDList: uuid128(66 66 66 66 66 66 66 66 66 66 66 66 66 66 66 66)
+        ProfileDescriptorList: { { uuid128(66 66 66 66 66 66 66 66 66 66 66 66 66 66 66 66), uint32(258) } }
+    [10] (unnamed service)
+        L2CAP PSM: 0x1
+        ServiceClassIDList: uuid32(00 00 12 00)
+        ProfileDescriptorList: { { uuid32(00 00 12 00), uint32(256) } }
+    [11] Advanced Audio
+        L2CAP PSM: 0x17
+        ServiceClassIDList: uuid32(00 00 11 0e)
+        ProfileDescriptorList: { { uuid32(00 00 11 0e), uint32(262) } }
+    [12] (unnamed service)
+        L2CAP PSM: 0x19
+        ServiceClassIDList: uuid32(00 00 11 0b)
+        ProfileDescriptorList: { { uuid32(00 00 11 0d), uint32(259) } }
+    [13] (unnamed service)
+        RFCOMM channel: 29
+        ServiceClassIDList: uuid128(99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99)
+        ProfileDescriptorList: { { uuid32(00 00 11 01), uint32(258) } }
+
+• iPhone de Juan  [b4-55-75-bb-57-ca]  connected  classOfDevice=0x000000
+  serviceClassMajor=0x0 deviceClassMajor=0x0 deviceClassMinor=0x0
+  (no SDP service records cached)
+
+• MOU-302  [e9-ea-f1-52-61-dc]  not connected  classOfDevice=0x000000
+  serviceClassMajor=0x0 deviceClassMajor=0x0 deviceClassMinor=0x0
+  (no SDP service records cached)
+
+=== Bluetooth LE — GATT scan (looking for advertisers with moto/buds in name) 
+BLE central: poweredOn — scanning 8s for *moto/buds*…
+(no LE peripherals matched moto/buds during scan)
+
+=== done ==================================================================
