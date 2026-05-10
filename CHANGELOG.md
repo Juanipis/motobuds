@@ -1,3 +1,15 @@
+## [1.1.0](https://github.com/Juanipis/motobuds/compare/v1.0.0...v1.1.0) (2026-05-10)
+
+### Features
+
+* **app:** add "Open at Login" toggle and wire Sparkle public key ([2871f27](https://github.com/Juanipis/motobuds/commit/2871f27694dba3026a07951990587db6d4b6420b))
+* **app:** add Sparkle auto-update integration ([f6e1077](https://github.com/Juanipis/motobuds/commit/f6e10779a781618bf83af975e0770ef543374189))
+
+### Bug Fixes
+
+* **release:** use python3 to splice the appcast item ([56788b1](https://github.com/Juanipis/motobuds/commit/56788b114ce6d9e79972f3cab2f454208bb456fe))
+* **tests:** align with renamed module and verified ANC wire format ([7fd8845](https://github.com/Juanipis/motobuds/commit/7fd88453d1250b66a8b597cc01c7cdc49d0d9514))
+
 ## 1.0.0 (2026-05-10)
 
 ### Features
