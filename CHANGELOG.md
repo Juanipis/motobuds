@@ -1,3 +1,9 @@
+## [1.3.1](https://github.com/Juanipis/motobuds/compare/v1.3.0...v1.3.1) (2026-05-10)
+
+### Bug Fixes
+
+* **notifs:** findMyDevice notif uses [L,R] not [side,on] ([f894301](https://github.com/Juanipis/motobuds/commit/f8943016aeace1bace39b6426e637d90fd0071c4))
+
 ## [1.3.0](https://github.com/Juanipis/motobuds/compare/v1.2.2...v1.3.0) (2026-05-10)
 
 ### Features
