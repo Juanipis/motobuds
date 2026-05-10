@@ -8,9 +8,15 @@ public struct MenuBarView: View {
     }
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(manager.state.deviceName)
-                .font(.motoHeadline(15))
-                .foregroundStyle(MotoColor.textPrimary)
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(connectionColor)
+                    .frame(width: 8, height: 8)
+                Text(manager.state.deviceName)
+                    .font(.motoHeadline(15))
+                    .foregroundStyle(MotoColor.textPrimary)
+                Spacer()
+            }
             HStack(spacing: 12) {
                 miniBattery("L", manager.state.batteryLeft)
                 miniBattery("R", manager.state.batteryRight)
@@ -40,6 +46,16 @@ public struct MenuBarView: View {
                 }
             }
             Divider()
+            if manager.state.connection != .connected && !manager.usingMockTransport {
+                Button {
+                    manager.connect()
+                } label: {
+                    HStack { Text("Reconectar"); Spacer(); Image(systemName: "arrow.clockwise") }
+                }
+                .buttonStyle(.plain)
+                .font(.motoBody(12))
+                .foregroundStyle(MotoColor.accent)
+            }
             Button(action: openMain) {
                 HStack { Text("Abrir MotoBuds"); Spacer(); Image(systemName: "arrow.up.right.square") }
             }
@@ -56,6 +72,14 @@ public struct MenuBarView: View {
         .padding(14)
         .frame(width: 260)
         .background(MotoColor.bgDeep)
+    }
+
+    private var connectionColor: Color {
+        switch manager.state.connection {
+        case .connected:    return MotoColor.success
+        case .connecting:   return MotoColor.warning
+        case .disconnected: return Color.gray.opacity(0.6)
+        }
     }
     @ViewBuilder
     private func miniBattery(_ label: String, _ pct: Int?) -> some View {

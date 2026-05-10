@@ -53,7 +53,8 @@ echo "    $SIGNATURE"
 
 PUB_DATE="$(LC_ALL=C TZ=UTC date '+%a, %d %b %Y %H:%M:%S +0000')"
 
-ITEM=$(cat <<XML
+ITEM_FILE="$(mktemp)"
+cat > "$ITEM_FILE" <<XML
     <item>
       <title>MotoBuds $VERSION</title>
       <pubDate>$PUB_DATE</pubDate>
@@ -68,13 +69,23 @@ ITEM=$(cat <<XML
           $SIGNATURE/>
     </item>
 XML
-)
 
-TMP_OUT="$(mktemp)"
-awk -v item="$ITEM" '
-    /<\/channel>/ && !done { print item; done=1 }
-    { print }
-' "$APPCAST" > "$TMP_OUT"
-mv "$TMP_OUT" "$APPCAST"
+# Use python3 for the splice — POSIX awk on the GitHub macOS runner
+# rejects multi-line `-v` strings, sed lacks reliable multi-line insert,
+# and python3 is on every macOS.
+python3 - "$APPCAST" "$ITEM_FILE" <<'PY'
+import sys, pathlib
+
+cast_path = pathlib.Path(sys.argv[1])
+item = pathlib.Path(sys.argv[2]).read_text()
+text = cast_path.read_text()
+needle = "</channel>"
+idx = text.find(needle)
+if idx < 0:
+    raise SystemExit(f"missing {needle} in {cast_path}")
+new = text[:idx] + item + text[idx:]
+cast_path.write_text(new)
+PY
+rm -f "$ITEM_FILE"
 
 echo "==> appended <item> for $VERSION to $APPCAST"
