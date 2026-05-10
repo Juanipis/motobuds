@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/Juanipis/motobuds/compare/v1.2.0...v1.2.1) (2026-05-10)
+
+### Bug Fixes
+
+* **cask:** strip the quarantine xattr after install ([59b5463](https://github.com/Juanipis/motobuds/commit/59b546392dc58a4e0d46262a23d5436abe3ae5fa))
+
 ## [1.2.0](https://github.com/Juanipis/motobuds/compare/v1.1.0...v1.2.0) (2026-05-10)
 
 ### Features
