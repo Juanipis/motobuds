@@ -9,7 +9,9 @@ struct MotoBudsApp: App {
     init() {
         let env = ProcessInfo.processInfo.environment
         let m: BudsManager
-        if env["MOTOBUDS_REAL"] == nil {
+        // Default: real RFCOMM SPP transport. Set MOTOBUDS_MOCK=1 to develop
+        // the UI without hardware (mock state with simulated battery drain).
+        if env["MOTOBUDS_MOCK"] != nil {
             m = BudsManager.mock()
         } else {
             // SPP transport is the path that actually works on macOS — RFCOMM
