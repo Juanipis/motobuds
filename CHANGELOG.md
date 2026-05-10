@@ -1,3 +1,13 @@
+## [1.2.0](https://github.com/Juanipis/motobuds/compare/v1.1.0...v1.2.0) (2026-05-10)
+
+### Features
+
+* **ui:** hand-drawn buds hero illustration ([8c5feaa](https://github.com/Juanipis/motobuds/commit/8c5feaae785f8c1b6517f942689ec51da0f211d3))
+
+### Bug Fixes
+
+* **release:** stop emitting duplicate length= attribute on appcast enclosure ([35625b2](https://github.com/Juanipis/motobuds/commit/35625b22f372eb359ccd529cdf83b37d435c51e5))
+
 ## [1.1.0](https://github.com/Juanipis/motobuds/compare/v1.0.0...v1.1.0) (2026-05-10)
 
 ### Features
