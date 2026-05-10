@@ -4,6 +4,7 @@ import AppKit
 @main
 struct MotoBudsApp: App {
     @State private var manager: BudsManager
+    @StateObject private var updater = Updater()
 
     init() {
         let env = ProcessInfo.processInfo.environment
@@ -25,10 +26,17 @@ struct MotoBudsApp: App {
     var body: some Scene {
         WindowGroup("MotoBuds") {
             ContentView(manager: manager)
+                .environmentObject(updater)
                 .background(MotoColor.bgDeep)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Buscar actualizaciones…") { updater.checkNow() }
+                    .disabled(!updater.canCheck)
+            }
+        }
 
         MenuBarExtra {
             MenuBarView(manager: manager) {

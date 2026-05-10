@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct FirmwareView: View {
     let manager: BudsManager
+    @EnvironmentObject private var updater: Updater
     @State private var loginItemState: LoginItem.State = .disabled
     @State private var loginItemError: String?
 
@@ -53,6 +54,17 @@ public struct FirmwareView: View {
                         .font(.motoBody(11))
                         .foregroundStyle(MotoColor.textSecondary)
                 }
+                Divider().background(MotoColor.separator).padding(.vertical, 2)
+                Button {
+                    updater.checkNow()
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                        Text(updater.canCheck ? "Buscar actualizaciones" : "Buscando…")
+                    }
+                }
+                .buttonStyle(PillButtonStyle(selected: false))
+                .disabled(!updater.canCheck)
             }
         }
     }
