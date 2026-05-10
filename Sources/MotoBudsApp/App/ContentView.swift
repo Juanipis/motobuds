@@ -180,7 +180,7 @@ public struct ContentView: View {
                     .background(MotoColor.bgCardAlt)
                     .frame(height: 240)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                Text("También en: ~/Library/Logs/MotoBudsMac.log")
+                Text("También en: ~/Library/Logs/MotoBuds.log")
                     .font(.motoMono(9))
                     .foregroundStyle(MotoColor.textSecondary)
             }

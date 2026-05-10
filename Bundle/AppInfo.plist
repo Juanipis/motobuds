@@ -34,7 +34,7 @@
          run `generate_keys` from Sparkle. Leave SUFeedURL pointing at the
          GitHub Pages site that publishes appcast.xml. -->
     <key>SUFeedURL</key><string>https://juanipis.github.io/motobuds/appcast.xml</string>
-    <key>SUPublicEDKey</key><string></string>
+    <key>SUPublicEDKey</key><string>cng1dhtWZE1mamVEwTFcA5enYJa/hSFCZ/a7A6hlFLI=</string>
     <key>SUEnableAutomaticChecks</key><true/>
     <key>SUEnableInstallerLauncherService</key><true/>
     <!-- Once a day. The user can also "Check for Updates…" from the popover. -->

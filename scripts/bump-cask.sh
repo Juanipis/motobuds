@@ -59,7 +59,7 @@ cask "motobuds" do
   zap trash: [
     "~/Library/Application Support/MotoBuds",
     "~/Library/Caches/com.juanipis.MotoBuds",
-    "~/Library/Logs/MotoBudsMac.log",
+    "~/Library/Logs/MotoBuds.log",
     "~/Library/Preferences/com.juanipis.MotoBuds.plist",
   ]
 end

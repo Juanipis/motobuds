@@ -339,7 +339,7 @@ public final class BudsManager {
         if debugLog.count > 200 { debugLog.removeFirst(debugLog.count - 200) }
         // Side-channel: also append to a tail-able file. Useful for
         // diagnosing connection issues from the terminal.
-        let path = NSHomeDirectory() + "/Library/Logs/MotoBudsMac.log"
+        let path = NSHomeDirectory() + "/Library/Logs/MotoBuds.log"
         if let data = (entry + "\n").data(using: .utf8) {
             if let fh = FileHandle(forWritingAtPath: path) {
                 _ = try? fh.seekToEnd(); try? fh.write(contentsOf: data); try? fh.close()
