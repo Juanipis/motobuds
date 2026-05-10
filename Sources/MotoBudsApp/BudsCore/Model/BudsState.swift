@@ -47,6 +47,18 @@ public struct AudioToggles: Sendable, Equatable {
     public var gameMode: Bool = false
     public var inEarDetection: Bool = true
     public var adaptiveHearing: Bool = false
+    public var crystalTalk: Bool = false
+    public var caseRecording: Bool = false
+    public var autoVolume: Bool = false
+}
+
+public struct HardwareInfo: Sendable, Equatable {
+    public var personalizedName: String?
+    public var leftSerial: String?
+    public var rightSerial: String?
+    public var caseSerial: String?
+    public var sku: String?
+    public var profileVersion: String?
 }
 
 /// Find-buds active state. The buds emit a loud sound while finding.
@@ -82,6 +94,7 @@ public struct BudsState: Sendable, Equatable {
     public var toggles: AudioToggles = AudioToggles()
     public var dualConnect: Bool = false
     public var firmware: FirmwareInfo = FirmwareInfo()
+    public var hardware: HardwareInfo = HardwareInfo()
     public var live: LiveStatus = LiveStatus()
     public var findBuds: FindBudsState = .idle
 }

@@ -129,9 +129,27 @@ public enum Commands {
     }
 
     /// Adaptive hearing (feature 105). `setAdaptationStatus` (0x203) — single
-    /// byte payload: 0=off, 1=on. TBD whether values are flipped.
+    /// byte payload: 0=off, 1=on.
     public static func setAdaptiveHearing(_ on: Bool, seq: UInt16) -> Packet {
         Packet(opcode: Opcode.setAdaptationStatus.rawValue, seq: seq,
                payload: Data([on ? 0x01 : 0x00]))
+    }
+
+    public static func setAutoVolume(_ on: Bool, seq: UInt16) -> Packet {
+        Packet(opcode: Opcode.setAutoVolume.rawValue, seq: seq,
+               payload: Data([on ? 0x01 : 0x00]))
+    }
+
+    public static func setCaseRecording(_ on: Bool, seq: UInt16) -> Packet {
+        Packet(opcode: Opcode.setCaseRecording.rawValue, seq: seq,
+               payload: Data([on ? 0x01 : 0x00]))
+    }
+
+    /// Crystal Talk = call-noise-suppression. The official app routes it
+    /// through `setToggleConfig` (0x102) with a feature id (we use 14, the
+    /// "crystal_talk" slot in the bud's toggle table). Sub byte = on/off.
+    public static func setCrystalTalk(_ on: Bool, seq: UInt16) -> Packet {
+        Packet(opcode: Opcode.setToggleConfig.rawValue, seq: seq,
+               payload: Data([0x0E, on ? 0x01 : 0x00, 0x00]))
     }
 }

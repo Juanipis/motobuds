@@ -61,6 +61,19 @@ public final class BudsManager {
                 _ = try? await sendCommand(Packet(opcode: Opcode.getBassEnhancement.rawValue, seq: nextSeq()))
                 try? await Task.sleep(nanoseconds: 800_000_000)
                 _ = try? await sendCommand(Packet(opcode: Opcode.getVolumeBoost.rawValue, seq: nextSeq()))
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                _ = try? await sendCommand(Packet(opcode: Opcode.getProfileVersion.rawValue, seq: nextSeq()))
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                _ = try? await sendCommand(Packet(opcode: Opcode.getHardwareInfo.rawValue, seq: nextSeq()))
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                _ = try? await sendCommand(Packet(opcode: Opcode.getCaseRecording.rawValue, seq: nextSeq()))
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                _ = try? await sendCommand(Packet(opcode: Opcode.getAutoVolume.rawValue, seq: nextSeq()))
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                _ = try? await sendCommand(Packet(opcode: Opcode.getAdaptationStatus.rawValue, seq: nextSeq()))
+                // Set our MAC into state so About can show it. SPP transport
+                // already knows it from the config.
+                state.deviceMAC = "A4:05:6E:D9:C9:14"
                 startPeriodicRefresh()
             }
         } catch {
@@ -184,6 +197,30 @@ public final class BudsManager {
         log("Adaptive hearing: \(on)")
         if !usingMockTransport {
             Task { _ = try? await sendCommand(Commands.setAdaptiveHearing(on, seq: nextSeq())) }
+        }
+    }
+
+    public func setAutoVolume(_ on: Bool) {
+        state.toggles.autoVolume = on
+        log("Auto volume: \(on)")
+        if !usingMockTransport {
+            Task { _ = try? await sendCommand(Commands.setAutoVolume(on, seq: nextSeq())) }
+        }
+    }
+
+    public func setCaseRecording(_ on: Bool) {
+        state.toggles.caseRecording = on
+        log("Case recording: \(on)")
+        if !usingMockTransport {
+            Task { _ = try? await sendCommand(Commands.setCaseRecording(on, seq: nextSeq())) }
+        }
+    }
+
+    public func setCrystalTalk(_ on: Bool) {
+        state.toggles.crystalTalk = on
+        log("Crystal Talk: \(on)")
+        if !usingMockTransport {
+            Task { _ = try? await sendCommand(Commands.setCrystalTalk(on, seq: nextSeq())) }
         }
     }
 
@@ -317,19 +354,82 @@ public final class BudsManager {
                 state.toggles.volumeBoost = pkt.payload[1] != 0
             }
         case Opcode.getHardwareInfo.rawValue:
-            // Verified: payload contains device name (30 padded bytes) +
-            // 3x serial number (20 padded bytes) + SKU (7 bytes).
-            if pkt.payload.count >= 30 {
-                let nameBytes = pkt.payload.prefix(30).split(separator: 0).first ?? []
-                if !nameBytes.isEmpty,
-                   let name = String(bytes: nameBytes, encoding: .utf8)?
-                       .trimmingCharacters(in: .whitespaces),
-                   !name.isEmpty {
-                    state.deviceName = name
+            // Verified: payload is name(30) + leftSerial(20) + rightSerial(20)
+            //                     + caseSerial(20) + sku(7) = 97 bytes,
+            // each field is null/space-padded ASCII.
+            state.hardware = parseHardwareInfo(pkt.payload, fallback: state.hardware)
+            if let n = state.hardware.personalizedName, !n.isEmpty {
+                state.deviceName = n
+            }
+        case Opcode.getProfileVersion.rawValue:
+            // Two bytes: e.g. [01 08] = profile version 1.08.
+            if pkt.payload.count >= 2 {
+                state.hardware.profileVersion =
+                    String(format: "%d.%02d", pkt.payload[0], pkt.payload[1])
+                if state.firmware.leftBud == nil {
+                    state.firmware.leftBud = state.hardware.profileVersion
+                    state.firmware.rightBud = state.hardware.profileVersion
+                    state.firmware.caseFW   = state.hardware.profileVersion
                 }
             }
+        case Opcode.getCaseRecording.rawValue, Opcode.caseRecordingChanged.rawValue:
+            applyToggle(pkt) { state.toggles.caseRecording = $0 }
+        case Opcode.getAutoVolume.rawValue, Opcode.autoVolumeChanged.rawValue:
+            applyToggle(pkt) { state.toggles.autoVolume = $0 }
+        case Opcode.getInEarDetection.rawValue, Opcode.inEarDetectionNotif.rawValue:
+            // Note: 0x402 GET response uses [state] and 0x40D notif uses
+            // [oldState, newState]. The toggles plumbing differs from in-ear
+            // STATUS (0x404) which is [L_in_ear, R_in_ear] — handled above.
+            applyToggle(pkt) { state.toggles.inEarDetection = $0 }
+        case Opcode.adaptationStatusChanged.rawValue, Opcode.getAdaptationStatus.rawValue:
+            // Adaptive hearing on/off. 0x202 get returns [state]; 0x205 notif
+            // is [oldState, newState] — payload[1] is the new value.
+            applyToggle(pkt) { state.toggles.adaptiveHearing = $0 }
         default: break
         }
+    }
+
+    /// Generic helper: GET responses (type=0x20) carry just `[value]`,
+    /// notifications (type=0x40) carry `[oldValue, newValue]`. We always
+    /// take the freshest byte we can.
+    private func applyToggle(_ pkt: Packet, _ apply: (Bool) -> Void) {
+        if pkt.type == .responseNoAck, let b = pkt.payload.first {
+            apply(b != 0)
+        } else if pkt.payload.count >= 2 {
+            apply(pkt.payload[1] != 0)
+        } else if let b = pkt.payload.first {
+            apply(b != 0)
+        }
+    }
+
+    /// Parse `getHardwareInfo` (op 0x004) payload. Layout from real bud:
+    ///   30 bytes: device name (UTF-8, NUL-padded)
+    ///   20 bytes: left bud serial  (ASCII, space-padded)
+    ///   20 bytes: right bud serial (ASCII, space-padded)
+    ///   20 bytes: case serial      (ASCII, space-padded)
+    ///    7 bytes: SKU / PCB code   (ASCII)
+    /// Total = 97 bytes. Any short payload (older firmware) falls back to
+    /// what we already have.
+    private func parseHardwareInfo(_ payload: Data, fallback: HardwareInfo) -> HardwareInfo {
+        var hw = fallback
+        func slice(_ start: Int, _ length: Int) -> String? {
+            guard payload.count >= start + length else { return nil }
+            let end = payload.index(payload.startIndex, offsetBy: start + length)
+            let begin = payload.index(payload.startIndex, offsetBy: start)
+            // Strip NULs and trailing whitespace.
+            let bytes = payload[begin..<end].prefix { $0 != 0 }
+            guard !bytes.isEmpty,
+                  let s = String(bytes: bytes, encoding: .utf8)?
+                      .trimmingCharacters(in: .whitespaces),
+                  !s.isEmpty else { return nil }
+            return s
+        }
+        if let n = slice(0, 30) { hw.personalizedName = n }
+        if let s = slice(30, 20) { hw.leftSerial  = s }
+        if let s = slice(50, 20) { hw.rightSerial = s }
+        if let s = slice(70, 20) { hw.caseSerial  = s }
+        if let s = slice(90, 7)  { hw.sku = s }
+        return hw
     }
 
     private func log(_ s: String) {

@@ -73,18 +73,24 @@ public struct FirmwareView: View {
     private var aboutCard: some View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Acerca de").font(.motoHeadline())
+                Text("Buds").font(.motoHeadline())
                     .foregroundStyle(MotoColor.textPrimary)
                 row("Modelo", "XT2443-1 (guitar)")
                 row("Nombre", manager.state.deviceName)
                 row("MAC", manager.state.deviceMAC.isEmpty ? "—" : manager.state.deviceMAC)
-                row("Firmware izq.", manager.state.firmware.leftBud ?? "—")
-                row("Firmware der.", manager.state.firmware.rightBud ?? "—")
-                row("Firmware estuche", manager.state.firmware.caseFW ?? "—")
-                row("Transporte", manager.usingMockTransport ? "Mock (UI)" : "RFCOMM SPP ch 16")
+                row("Firmware", manager.state.hardware.profileVersion ?? "—")
+                row("Serial izq.", manager.state.hardware.leftSerial ?? "—")
+                row("Serial der.", manager.state.hardware.rightSerial ?? "—")
+                row("Serial estuche", manager.state.hardware.caseSerial ?? "—")
+                row("SKU", manager.state.hardware.sku ?? "—")
+                Divider().background(MotoColor.separator).padding(.vertical, 4)
+                Text("App").font(.motoBody(12).weight(.semibold))
+                    .foregroundStyle(MotoColor.textSecondary)
                 row("Versión",
                     Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
                     ?? "?")
+                row("Transporte", manager.usingMockTransport ? "Mock (UI)" : "RFCOMM SPP ch 16")
+                row("Repositorio", "github.com/Juanipis/motobuds")
             }
         }
     }
