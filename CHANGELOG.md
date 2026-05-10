@@ -1,3 +1,9 @@
+## 1.0.0 (2026-05-10)
+
+### Features
+
+* initial release of MotoBuds for Mac ([44cd8bd](https://github.com/Juanipis/motobuds/commit/44cd8bd5d4e10cf266e051a2beae373b5c046e04))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
