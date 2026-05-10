@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/Juanipis/motobuds/compare/v1.2.1...v1.2.2) (2026-05-10)
+
+### Bug Fixes
+
+* **app:** default to real RFCOMM transport, mock requires opt-in ([7d9c472](https://github.com/Juanipis/motobuds/commit/7d9c47291f232258b74ac2b439ee0f684d932ba2))
+
 ## [1.2.1](https://github.com/Juanipis/motobuds/compare/v1.2.0...v1.2.1) (2026-05-10)
 
 ### Bug Fixes

@@ -41,5 +41,17 @@
           type="application/zip"
           sparkle:edSignature="OaJWymSylCQXyyJMLyWC9ZGRyRtABtmkYSF8RZcmSkc1S6D322AOJOchxm72NawZAKg7gEXWnJxKYvI/0wanBw==" length="2704248"/>
     </item>
+    <item>
+      <title>MotoBuds 1.2.2</title>
+      <pubDate>Sun, 10 May 2026 01:10:39 +0000</pubDate>
+      <sparkle:version>1.2.2</sparkle:version>
+      <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/Juanipis/motobuds/releases/tag/v1.2.2</sparkle:releaseNotesLink>
+      <enclosure
+          url="https://github.com/Juanipis/motobuds/releases/download/v1.2.2/MotoBuds-1.2.2.zip"
+          type="application/zip"
+          sparkle:edSignature="ktImaDYfuUkJoBxY6xXM0DTWgqIsb4oeReUrc1laROuLNALDdOwqSagoS1qhBKhCxGpLAB09qRKEsRZeyuH3AQ==" length="2703865"/>
+    </item>
 </channel>
 </rss>
