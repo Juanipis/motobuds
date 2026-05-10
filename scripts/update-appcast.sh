@@ -64,11 +64,13 @@ cat > "$ITEM_FILE" <<XML
       <sparkle:releaseNotesLink>$RELEASE_NOTES_URL</sparkle:releaseNotesLink>
       <enclosure
           url="$ZIP_URL"
-          length="$ZIP_SIZE"
           type="application/zip"
           $SIGNATURE/>
     </item>
 XML
+# Note: sign_update already emits both sparkle:edSignature="…" and
+# length="…" attributes, so we don't add a separate length= here. Adding
+# one would result in duplicate XML attributes (ill-formed).
 
 # Use python3 for the splice — POSIX awk on the GitHub macOS runner
 # rejects multi-line `-v` strings, sed lacks reliable multi-line insert,
