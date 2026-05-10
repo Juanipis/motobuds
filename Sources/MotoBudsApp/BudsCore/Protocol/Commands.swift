@@ -73,17 +73,24 @@ public enum Commands {
         Packet(opcode: Opcode.getANCMode.rawValue, seq: seq)
     }
 
-    // MARK: Find buds (opcode 0x405)
+    // MARK: Find buds — official path is `setToggleConfig (0x102)` feature 7.
 
-    /// Payload TBD — 1 byte side-flag is the most common convention:
-    /// `0x00` = left, `0x01` = right, `0x02` = both. Verify with PacketLogger.
+    /// Send via the unified toggle-config API the official app uses.
+    /// Payload `[7, leftRing, rightRing]`. The direct `0x405` path also
+    /// exists but uses a different (cursed) `[sideIndex, on]` encoding
+    /// where the side index is *inverted* from what you'd expect; using
+    /// `0x102` with feature 7 sidesteps that entirely.
     public static func findBuds(side: BudSide, seq: UInt16) -> Packet {
-        let sideByte: UInt8 = side == .left ? 0x00 : 0x01
-        return Packet(opcode: Opcode.findMyDevice.rawValue, seq: seq, payload: Data([sideByte, 0x01]))
+        let payload: [UInt8] = side == .left ? [0x07, 0x01, 0x00]
+                                              : [0x07, 0x00, 0x01]
+        return Packet(opcode: Opcode.setToggleConfig.rawValue, seq: seq,
+                      payload: Data(payload))
     }
 
     public static func stopFindBuds(seq: UInt16) -> Packet {
-        Packet(opcode: Opcode.findMyDevice.rawValue, seq: seq, payload: Data([0x02, 0x00]))
+        // Same path: setToggleConfig feature 7 = [0, 0] (neither bud rings).
+        Packet(opcode: Opcode.setToggleConfig.rawValue, seq: seq,
+               payload: Data([0x07, 0x00, 0x00]))
     }
 
     // MARK: Dual connection
@@ -145,11 +152,4 @@ public enum Commands {
                payload: Data([on ? 0x01 : 0x00]))
     }
 
-    /// Crystal Talk = call-noise-suppression. The official app routes it
-    /// through `setToggleConfig` (0x102) with a feature id (we use 14, the
-    /// "crystal_talk" slot in the bud's toggle table). Sub byte = on/off.
-    public static func setCrystalTalk(_ on: Bool, seq: UInt16) -> Packet {
-        Packet(opcode: Opcode.setToggleConfig.rawValue, seq: seq,
-               payload: Data([0x0E, on ? 0x01 : 0x00, 0x00]))
-    }
 }

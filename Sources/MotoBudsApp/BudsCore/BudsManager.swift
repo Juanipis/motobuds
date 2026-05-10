@@ -216,13 +216,8 @@ public final class BudsManager {
         }
     }
 
-    public func setCrystalTalk(_ on: Bool) {
-        state.toggles.crystalTalk = on
-        log("Crystal Talk: \(on)")
-        if !usingMockTransport {
-            Task { _ = try? await sendCommand(Commands.setCrystalTalk(on, seq: nextSeq())) }
-        }
-    }
+    // Crystal Talk lives in a feature slot we haven't decoded yet — not
+    // exposed in the UI to avoid sending invalid payloads to the bud.
 
     // MARK: - Internals
 
@@ -268,10 +263,23 @@ public final class BudsManager {
                 state.batteryCase  = pkt.payload[2] == 0xFF ? nil : Int(pkt.payload[2])
             }
         case Opcode.toggleConfigChanged.rawValue:
-            // Notification when a toggle config changed (after we set one).
-            // Payload format: [feature_id, category, sub]. Feature 1 = ANC.
-            if pkt.payload.count >= 3, pkt.payload[0] == 0x01 {
-                state.ancMode = decodeANC(category: pkt.payload[1], sub: pkt.payload[2])
+            // Payload format: [feature_id, sub1, sub2]. Different features:
+            //   feature 1 (ANC)  → [01, category, sub]
+            //   feature 7 (find) → [07, leftRing, rightRing]
+            //   others           → [id, value, 0]
+            if pkt.payload.count >= 3 {
+                switch pkt.payload[0] {
+                case 0x01:
+                    state.ancMode = decodeANC(category: pkt.payload[1], sub: pkt.payload[2])
+                case 0x07:
+                    let l = pkt.payload[1] != 0
+                    let r = pkt.payload[2] != 0
+                    state.findBuds = (l && r) ? .findingBoth
+                                  :  l        ? .findingLeft
+                                  :  r        ? .findingRight
+                                  :              .idle
+                default: break
+                }
             }
         case Opcode.getToggleConfigs.rawValue:
             // List response with all toggle configs. Walks entries of form

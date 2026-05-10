@@ -38,20 +38,22 @@ final class PacketTests: XCTestCase {
     }
 
     func testEncodeFindBudsLeft() {
-        // Verified empirically: payload [00, 01] = "find left, ON".
+        // Official path: setToggleConfig (0x102) feature 7 = [07, L, R].
         let pkt = Commands.findBuds(side: .left, seq: 1)
-        XCTAssertEqual(pkt.opcode, Opcode.findMyDevice.rawValue)
-        XCTAssertEqual(pkt.payload, Data([0x00, 0x01]))
+        XCTAssertEqual(pkt.opcode, Opcode.setToggleConfig.rawValue)
+        XCTAssertEqual(pkt.payload, Data([0x07, 0x01, 0x00]))
     }
 
     func testEncodeFindBudsRight() {
         let pkt = Commands.findBuds(side: .right, seq: 1)
-        XCTAssertEqual(pkt.payload, Data([0x01, 0x01]))
+        XCTAssertEqual(pkt.opcode, Opcode.setToggleConfig.rawValue)
+        XCTAssertEqual(pkt.payload, Data([0x07, 0x00, 0x01]))
     }
 
     func testEncodeStopFindBuds() {
         let pkt = Commands.stopFindBuds(seq: 1)
-        XCTAssertEqual(pkt.payload, Data([0x02, 0x00]))
+        XCTAssertEqual(pkt.opcode, Opcode.setToggleConfig.rawValue)
+        XCTAssertEqual(pkt.payload, Data([0x07, 0x00, 0x00]))
     }
 
     func testEncodeSetDualConnection() {

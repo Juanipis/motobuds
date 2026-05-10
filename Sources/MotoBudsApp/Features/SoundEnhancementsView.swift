@@ -23,6 +23,12 @@ public struct SoundEnhancementsView: View {
                 toggleRow("Adaptive hearing", "wand.and.stars",
                           isOn: Binding(get: { manager.state.toggles.adaptiveHearing },
                                         set: { manager.setAdaptiveHearing($0) }))
+                toggleRow("Volumen automático", "speaker.wave.2.bubble",
+                          isOn: Binding(get: { manager.state.toggles.autoVolume },
+                                        set: { manager.setAutoVolume($0) }))
+                toggleRow("Grabar al guardar en estuche", "case",
+                          isOn: Binding(get: { manager.state.toggles.caseRecording },
+                                        set: { manager.setCaseRecording($0) }))
             }
         }
     }
