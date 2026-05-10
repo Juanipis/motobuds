@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/Juanipis/motobuds/compare/v1.3.1...v1.3.2) (2026-05-10)
+
+### Bug Fixes
+
+* **find-buds:** route through setToggleConfig like the official app ([384e589](https://github.com/Juanipis/motobuds/commit/384e58928c3dc15686b976e81a53d9c1ad28e20b))
+
 ## [1.3.1](https://github.com/Juanipis/motobuds/compare/v1.3.0...v1.3.1) (2026-05-10)
 
 ### Bug Fixes
