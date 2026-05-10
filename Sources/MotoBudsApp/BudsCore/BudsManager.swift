@@ -312,16 +312,15 @@ public final class BudsManager {
                 state.live.rightFit = Int(pkt.payload[1])
             }
         case Opcode.findMyDeviceNotif.rawValue:
-            // Payload = [side, on/off]. side: 0=L, 1=R, 2=both.
+            // Verified: payload = [leftRinging, rightRinging], same shape
+            // as the SET command we send.
             if pkt.payload.count >= 2 {
-                let active = pkt.payload[1] != 0
-                let side = pkt.payload[0]
-                if active {
-                    state.findBuds = side == 0 ? .findingLeft
-                                   : side == 1 ? .findingRight : .findingBoth
-                } else {
-                    state.findBuds = .idle
-                }
+                let l = pkt.payload[0] != 0
+                let r = pkt.payload[1] != 0
+                state.findBuds = (l && r) ? .findingBoth
+                              :  l        ? .findingLeft
+                              :  r        ? .findingRight
+                              :              .idle
             }
         case Opcode.getDualConnection.rawValue, Opcode.dualConnectionChanged.rawValue:
             // Payload = [feature_enabled, current_state]. We only care about [1].
