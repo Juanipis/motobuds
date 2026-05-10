@@ -1,3 +1,9 @@
+## [1.3.3](https://github.com/Juanipis/motobuds/compare/v1.3.2...v1.3.3) (2026-05-10)
+
+### Bug Fixes
+
+* **transport:** fall back to other RFCOMM channels when ch 16 is locked ([d47304a](https://github.com/Juanipis/motobuds/commit/d47304a84750ac598621fab43b7522dbc7ae6801))
+
 ## [1.3.2](https://github.com/Juanipis/motobuds/compare/v1.3.1...v1.3.2) (2026-05-10)
 
 ### Bug Fixes
