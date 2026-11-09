@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: semantic-release
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+          node --version
+
+      # Homebrew disabled the Sparkle cask on 2026-09-01 (Gatekeeper check), so
+      # fetch the official release tarball, verify its checksum and put bin/ on
+      # PATH; scripts/update-appcast.sh finds sign_update with `command -v`.
+      - name: Install Sparkle CLI tools
+        env:
+          SPARKLE_VERSION: '2.10.1'
+          SPARKLE_SHA256: '1a856d2a9edb8e628de88121d7be04cf0e2167f8641650b78fca00b14244cf27'
+        run: |
+          archive="$RUNNER_TEMP/sparkle.tar.xz"
+          curl -fsSL -o "$archive" "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
+          echo "${SPARKLE_SHA256}  ${archive}" | shasum -a 256 -c -
+          mkdir -p "$RUNNER_TEMP/sparkle"
+          tar -xJf "$archive" -C "$RUNNER_TEMP/sparkle"
+          xattr -dr com.apple.quarantine "$RUNNER_TEMP/sparkle" 2>/dev/null || true
+          echo "$RUNNER_TEMP/sparkle/bin" >> "$GITHUB_PATH"
+          test -x "$RUNNER_TEMP/sparkle/bin/sign_update"
+
+      - name: Install semantic-release
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/changelog \
+            @semantic-release/git \
+            @semantic-release/github \
+            @semantic-release/exec \
+            conventional-changelog-conventionalcommits
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Used by scripts/update-appcast.sh during prepareCmd. Optional —
+          # script no-ops if missing so first releases work without Sparkle.
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          # Used by scripts/bump-cask.sh during successCmd to push to the
+          # Juanipis/homebrew-tap repo. Optional — bump-cask exits cleanly
+          # if the secret is missing.
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: npx semantic-release
